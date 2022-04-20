@@ -1,26 +1,35 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useRef, useEffect } from "react";
+import ArcGISMap from "@arcgis/core/Map";
+import MapView from "@arcgis/core/views/MapView";
+
+import "./App.css";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  const mapDiv = useRef(null);
+
+  useEffect(() => {
+    if (mapDiv.current) {
+      const map = new ArcGISMap({
+        basemap: "gray-vector",
+      });
+
+      const view = new MapView({
+        map,
+        container: mapDiv.current,
+        extent: {
+          spatialReference: {
+            wkid: 102100,
+          },
+          xmax: -13581772,
+          xmin: -13584170,
+          ymax: 4436367,
+          ymin: 4435053,
+        },
+      });
+    }
+  }, []);
+
+  return <div className="mapDiv" ref={mapDiv}></div>;
 }
 
 export default App;
