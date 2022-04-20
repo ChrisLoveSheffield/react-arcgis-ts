@@ -1,6 +1,5 @@
 import React, { useRef, useEffect } from "react";
-import ArcGISMap from "@arcgis/core/Map";
-import MapView from "@arcgis/core/views/MapView";
+import {ArcGISMap, MapView} from './widget/library'
 
 import "./App.css";
 
