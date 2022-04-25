@@ -1,37 +1,25 @@
-import React, { useRef, useEffect } from 'react'
-import { ArcGISMap, MapView } from './widget/library'
-import CustomWidget from './widget/customSample'
+import { useState } from 'react'
+import MapViewConatainer from './MapView'
+import BasmapSelection from './basemapSelect'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import { Form } from 'react-bootstrap'
 
-import './App.css'
+const App = () => {
+    const [basemap, setBasemap] = useState('topo-vector')
 
-function App() {
-    const mapDiv = useRef(null)
-
-    useEffect(() => {
-        if (mapDiv.current) {
-            const map = new ArcGISMap({
-                basemap: 'gray-vector',
-            })
-
-            const view = new MapView({
-                map,
-                container: mapDiv.current,
-                extent: {
-                    spatialReference: {
-                        wkid: 102100,
-                    },
-                    xmax: -13581772,
-                    xmin: -13584170,
-                    ymax: 4436367,
-                    ymin: 4435053,
-                },
-            })
-            const wgt = new CustomWidget()
-            view.ui.add(wgt, 'top-right')
-        }
-    }, [])
-
-    return <div className="mapDiv" ref={mapDiv}></div>
+    return (
+        <>
+            <MapViewConatainer basemap={basemap} zoom="12" />
+            <Form.Select
+                id="basemapSeletor"
+                value={basemap}
+                aria-label="Default select example"
+                onChange={(event) => setBasemap(event.target.value)}
+            >
+                <BasmapSelection />
+            </Form.Select>
+        </>
+    )
 }
 
 export default App

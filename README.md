@@ -16,6 +16,12 @@ install arcgis module
 npm install @arcgis/core
 ```
 
+import css in index.tsx
+
+```
+import '@arcgis/core/assets/esri/themes/light/main.css';
+```
+
 set CSS
 
 ```
