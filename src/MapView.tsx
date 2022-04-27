@@ -1,63 +1,53 @@
+import EditorDiv from './widget/Editor/Editor'
+
 import { useRef, useEffect, useState } from 'react'
-import { ArcGISMap, MapView, Basemap } from './widget/library'
+import { ArcGISMap, MapView, Point, FeatureLayer } from './widget/library'
 import './App.css'
-
-declare global {
-    interface Window {
-        esriMap: ArcGISMap
-    }
-}
-
+import BasemapWidget from './widget/Basemap/Basemap'
+// import { ViewContext } from './context/ViewContext'
 interface mapContainer extends React.ComponentPropsWithRef<'div'> {
-    basemap?: string
+    basemap: string
     zoom?: string
 }
 
-const MapViewConatainer = (props: mapContainer) => {
+const MapViewConatainer: React.FC<mapContainer> = ({ basemap, zoom }) => {
     const mapDiv = useRef(null)
+
     const createMapView = () => {
         if (mapDiv.current) {
             const map = new ArcGISMap({
-                basemap: props.basemap,
+                basemap: basemap,
             })
-
             const view = new MapView({
-                map,
                 container: mapDiv.current,
-                extent: {
+                map: map,
+                center: new Point({
                     spatialReference: {
-                        wkid: 102100,
+                        wkid: 102140,
                     },
-                    xmax: -13581772,
-                    xmin: -13584170,
-                    ymax: 4436367,
-                    ymin: 4435053,
-                },
+                    x: 831398.6389631587,
+                    y: 840747.2377068244,
+                }),
+                zoom: 13,
             })
-            window.esriMap = map
+            const layer = new FeatureLayer({
+                // URL to the service
+                url: 'https://hsksht1pappw072.as.aecomnet.com/server/rest/services/Hosted/Editor_test/FeatureServer/0',
+            })
+            map.add(layer)
             return view
         }
     }
-    const [view, setView] = useState<MapView | undefined | null>(null)
+    let [view, setView] = useState<MapView>()
     useEffect(() => {
-        setView(createMapView())
-    }, [])
-
-    useEffect(() => {
-        if (view) {
-            view.map.basemap = Basemap.fromId(props.basemap ?? 'topo-vector')
-        }
-    }, [props.basemap, view])
-    useEffect(() => {
-        if (!view) return
-        const handle = view.on('click', (e) => console.log(e))
-        return () => {
-            handle && handle.remove()
-        }
+        if (!view) setView(createMapView())
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [view])
     return (
         <>
             <div className="mapDiv" ref={mapDiv}></div>
+            <EditorDiv esri_map={view} />
+            <BasemapWidget basemap={basemap} esri_map={view}></BasemapWidget>
         </>
     )
 }

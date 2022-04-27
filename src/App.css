@@ -1,3 +1,11 @@
+#Editor{
+  position: absolute;
+  top: 15px;
+  right: 30px;
+  width:25%;
+  height:50%;
+  background-color:white
+}
 #basemapSeletor{
   position: absolute;
   top: 15px;
