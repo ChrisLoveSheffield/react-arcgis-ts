@@ -1,29 +1,23 @@
-import BasmapSelection from './basemapSelect'
-import { Form } from 'react-bootstrap'
-import { useEffect, useState } from 'react'
-import { Basemap } from '../library'
+import { useEffect, useRef } from 'react'
+import { BasemapGallery } from '../library'
 import { BaseWigetOption } from '../BaseWidget'
 
-interface BasemapOption extends BaseWigetOption {
-    basemap: string
-}
-const BasemapWidget: React.FC<BasemapOption> = ({ basemap, esri_map }) => {
-    const [basemapSetting, setBasemap] = useState<BasemapOption['basemap']>(basemap)
+const BasemapDiv: React.FC<BaseWigetOption> = ({ esri_map }) => {
+    const basemapGalleryyDiv = useRef(null)
     useEffect(() => {
         let view = esri_map
-        if (view) {
-            view.map.basemap = Basemap.fromId(basemapSetting)
+        let basemapWgt: BasemapGallery | undefined
+        if (view && !basemapWgt && basemapGalleryyDiv.current) {
+            basemapWgt = new BasemapGallery({
+                view: view,
+                container: basemapGalleryyDiv.current,
+            })
         }
-    }, [basemapSetting, esri_map])
+    }, [esri_map])
     return (
-        <Form.Select
-            id="basemapSeletor"
-            value={basemapSetting}
-            aria-label="Default select example"
-            onChange={(event) => setBasemap((prevBaseMap) => event.target.value)}
-        >
-            <BasmapSelection />
-        </Form.Select>
+        <>
+            <div id="BasemapGallery" ref={basemapGalleryyDiv}></div>
+        </>
     )
 }
-export default BasemapWidget
+export default BasemapDiv

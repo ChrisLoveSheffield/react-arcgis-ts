@@ -6,5 +6,7 @@ import Basemap from '@arcgis/core/Basemap'
 import FeatureLayer from '@arcgis/core/layers/FeatureLayer'
 import Editor from '@arcgis/core/widgets/Editor'
 import Point from '@arcgis/core/geometry/Point'
+import BasemapGallery from '@arcgis/core/widgets/BasemapGallery'
+import Legend from '@arcgis/core/widgets/Legend'
 
-export { ArcGISMap, MapView, Widget, watchUtils, Basemap, FeatureLayer, Editor, Point }
+export { ArcGISMap, MapView, Widget, watchUtils, Basemap, FeatureLayer, Editor, Point, BasemapGallery, Legend }

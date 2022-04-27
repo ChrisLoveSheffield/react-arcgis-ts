@@ -1,9 +1,7 @@
-import EditorDiv from './widget/Editor/Editor'
-
 import { useRef, useEffect, useState } from 'react'
 import { ArcGISMap, MapView, Point, FeatureLayer } from './widget/library'
 import './App.css'
-import BasemapWidget from './widget/Basemap/Basemap'
+import WidgetPad from './widget/widgetPad'
 // import { ViewContext } from './context/ViewContext'
 interface mapContainer extends React.ComponentPropsWithRef<'div'> {
     basemap: string
@@ -46,8 +44,7 @@ const MapViewConatainer: React.FC<mapContainer> = ({ basemap, zoom }) => {
     return (
         <>
             <div className="mapDiv" ref={mapDiv}></div>
-            <EditorDiv esri_map={view} />
-            <BasemapWidget basemap={basemap} esri_map={view}></BasemapWidget>
+            <WidgetPad esri_map={view}></WidgetPad>
         </>
     )
 }

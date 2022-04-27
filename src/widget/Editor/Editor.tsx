@@ -17,6 +17,10 @@ const EditorDiv: React.FC<EditorProps> = ({ esri_map }) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => initialize(), [esri_map])
-    return <div id="Editor" ref={editorDiv}></div>
+    return (
+        <>
+            <div id="Editor" ref={editorDiv}></div>
+        </>
+    )
 }
 export default EditorDiv

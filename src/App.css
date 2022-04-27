@@ -1,16 +1,23 @@
-#Editor{
+
+.WidgetPanel{
+  position: absolute;
+  top: 15px;
+  right: 80px;
+  width:25%;
+  max-height: 80%;
+}
+
+#widgetBar{
   position: absolute;
   top: 15px;
   right: 30px;
-  width:25%;
-  height:50%;
-  background-color:white
 }
-#basemapSeletor{
-  position: absolute;
-  top: 15px;
-  left: 60px;
-  width:25%;
+calcite-action{
+  width:fit-content
+}
+
+#Editor{
+  z-index:0
 }
 .mapDiv {
   position: absolute;
