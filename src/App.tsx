@@ -6,7 +6,7 @@ const App = () => {
     return (
         <>
             <div id="MapBody">
-                <MapViewConatainer basemap="topo-vector" zoom="12" />
+                <MapViewConatainer basemap="dark-gray-vector" zoom="12" />
             </div>
         </>
     )
