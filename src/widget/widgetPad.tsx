@@ -1,10 +1,14 @@
-import { CalciteActionBar, CalciteAction, CalcitePanel } from '@esri/calcite-components-react'
+import { CalciteAction, CalciteShellPanel, CalciteShell, CalciteIcon } from '@esri/calcite-components-react'
 import { useState } from 'react'
+import Draggable from 'react-draggable'
+
 import { BaseWigetOption } from './BaseWidget'
 import EditorDiv from './Editor/Editor'
 import BasemapDiv from './Basemap/Basemap'
 import LegendDiv from './Legend/LegendDIv'
 
+import './css/draggable.css'
+import { Toast } from 'react-bootstrap'
 interface WigetState {
     basemap: boolean
     editor: boolean
@@ -12,7 +16,6 @@ interface WigetState {
 }
 
 let defaultState: WigetState = { editor: true, basemap: true, legend: true }
-
 interface BaseWigetProps {
     text: string
     icon: string
@@ -41,33 +44,27 @@ const wigets: BaseWigetProps[] = [
         content: LegendDiv,
     },
 ]
-interface widgetManger {
-    wgtState: WigetState
-    setWigetState: (e: React.MouseEvent<HTMLCalciteActionElement, MouseEvent>) => void
-}
+// interface widgetManger {
+//     wgtState: WigetState
+//     setWigetState: (e: React.MouseEvent<HTMLCalciteActionElement, MouseEvent>) => void
+// }
 
-const useWidgetManager = (state: WigetState) => {
+function useWidgetManager(state: WigetState) {
     const [wgtState, wgtSetState] = useState(state)
     return {
         wgtState,
-        setWigetState: (e: React.MouseEvent<HTMLCalciteActionElement, MouseEvent>) => {
-            const target = e.target as HTMLCalciteActionElement
-            const targetWgt = target.dataset.actionId as keyof WigetState
-
+        setWigetState: function (e: React.MouseEvent<Element, MouseEvent>, actionId: keyof WigetState) {
             wgtSetState((prev) => {
                 let newState = { ...prev } as WigetState
-                let p: keyof WigetState
-                for (p in newState) {
-                    if (p === targetWgt && newState[targetWgt]) {
-                        newState[targetWgt] = false
-                    } else newState[p] = true
-                }
 
+                newState[actionId] = !newState[actionId]
+                console.log(newState)
                 return newState
             })
         },
     }
 }
+
 /**
  * Customize widget base on user type
  * post server check permission
@@ -75,55 +72,74 @@ const useWidgetManager = (state: WigetState) => {
  * @param param1
  * @returns
  */
-const wigetfactory = ({ wgtState, setWigetState }: widgetManger, { esri_map }: BaseWigetOption) => {
+
+const WidgetPad: React.FC<BaseWigetOption> = ({ esri_map }) => {
+    const { wgtState, setWigetState } = useWidgetManager(defaultState)
     return (
         <>
-            <CalciteActionBar id="widgetBar" expand-disabled>
-                <>
+            <CalciteShell>
+                <CalciteShellPanel id="widgetBar" slot="primary-panel" position="end" detached>
                     {
                         // eslint-disable-next-line array-callback-return
                         wigets.map((wgt) => (
                             <CalciteAction
-                                key={wgt.text}
+                                key={'_' + wgt.text}
                                 text={wgt.text}
                                 icon={wgt.icon}
-                                data-action-id={wgt.actionId}
-                                onClick={(e) => setWigetState(e)}
+                                data-widget-id={wgt.actionId}
+                                onClick={(e) => setWigetState(e, wgt.actionId)}
                             ></CalciteAction>
                         ))
                     }
-                </>
-            </CalciteActionBar>
-            <>
+                </CalciteShellPanel>
+            </CalciteShell>
+            <div>
                 {
                     // eslint-disable-next-line array-callback-return
-                    wigets.map((wgt) => (
-                        <CalcitePanel
-                            className="WidgetPanel"
-                            key={wgt.text}
-                            heading={wgt.text}
-                            data-panel-id={wgt.actionId}
-                            hidden={wgtState[wgt.actionId]}
+                    wigets.map((wgt, i) => (
+                        <Draggable
+                            key={'_' + wgt.text}
+                            handle="strong"
+                            bounds="body"
+                            defaultPosition={{ x: 60 + i * 400, y: 15 }}
                         >
-                            {/* <CalciteAction
-                                icon="x"
-                                text="close"
-                                slot="header-menu-actions"
-                                onClick={(e) => setWigetState(e)}
-                            ></CalciteAction>
-                            <CalciteAction icon="minus" text="min" slot="header-menu-actions"></CalciteAction> */}
-                            <wgt.content esri_map={esri_map} />
-                        </CalcitePanel>
+                            <div className="no-cursor widgetDialog">
+                                <Toast
+                                    hidden={wgtState[wgt.actionId]}
+                                    key={'_' + wgt.text}
+                                    animation
+                                    onClose={(e) => {
+                                        if (e) {
+                                            return setWigetState(
+                                                e as React.MouseEvent<Element, MouseEvent>,
+                                                wgt.actionId
+                                            )
+                                        }
+                                    }}
+                                >
+                                    <Toast.Header>
+                                        <strong className="cursor widgetHeader">
+                                            <CalciteIcon
+                                                className="widgetHeaderIcon"
+                                                scale="m"
+                                                icon={wgt.icon}
+                                            ></CalciteIcon>
+                                            <strong className="me-auto widgetHeaderText">{wgt.text}</strong>
+                                        </strong>
+                                    </Toast.Header>
+                                    <Toast.Body>
+                                        <div className="WidgetPanel">
+                                            <wgt.content esri_map={esri_map} />
+                                        </div>
+                                    </Toast.Body>
+                                </Toast>
+                            </div>
+                        </Draggable>
                     ))
                 }
-            </>
+            </div>
         </>
     )
-}
-
-const WidgetPad: React.FC<BaseWigetOption> = ({ esri_map }) => {
-    const { wgtState, setWigetState } = useWidgetManager(defaultState)
-    return wigetfactory({ wgtState, setWigetState }, { esri_map })
 }
 
 export default WidgetPad

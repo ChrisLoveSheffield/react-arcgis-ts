@@ -1,11 +1,7 @@
 
-.WidgetPanel{
-  position: absolute;
-  top: 15px;
-  right: 80px;
-  width:25%;
-  max-height: 80%;
-}
+
+
+
 
 #widgetBar{
   position: absolute;
@@ -16,9 +12,7 @@ calcite-action{
   width:fit-content
 }
 
-#Editor{
-  z-index:0
-}
+
 .mapDiv {
   position: absolute;
   padding: 0;
@@ -26,7 +20,16 @@ calcite-action{
   height: 100%;
   width: 100%;
 }
-
+body{
+  position:absolute;
+  top:0px;
+  right:0px;
+  bottom:0px;
+  left:0px;
+  overflow:hidden;
+  height: 100%;
+  width: 100%;
+}
 .App {
   text-align: center;
 }

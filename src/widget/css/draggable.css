@@ -1,0 +1,40 @@
+.react-draggable, .cursor {
+    cursor: move;
+  }
+  .no-cursor {
+    cursor: auto;
+  }
+  .cursor-y {
+    cursor: ns-resize;
+  }
+  .cursor-x {
+    cursor: ew-resize;
+  }
+
+  .no-pointer-events {
+    pointer-events: none;
+  }
+  .hovered {
+    background-color: gray;
+  }
+  .widgetDialog{
+    width:min-content !important;
+    position: absolute
+  }
+  .widgetHeader{
+    width: 88%;
+  }
+    
+  .WidgetPanel{
+    width:auto;
+    max-height: 600px;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+  }
+  .widgetHeaderIcon{
+    margin: 8px
+  }
+  .widgetHeaderText{
+    vertical-align: super;
+  }
