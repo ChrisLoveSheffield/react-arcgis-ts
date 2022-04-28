@@ -1,13 +1,20 @@
-import MapViewConatainer from './MapView'
-import 'bootstrap/dist/css/bootstrap.min.css'
-import '@esri/calcite-components/dist/calcite/calcite.css'
+import MapViewConatainer from './MapView/MapView'
+import { Route, Routes } from 'react-router-dom'
 
 const App = () => {
     return (
         <>
-            <div id="MapBody">
-                <MapViewConatainer basemap="dark-gray-vector" zoom="12" />
-            </div>
+            <Routes>
+                <Route
+                    path="/"
+                    element={
+                        <div id="MapBody">
+                            <MapViewConatainer basemap="gray-vector" zoom="12" />
+                        </div>
+                    }
+                />
+                <Route path="/About" element={123} />
+            </Routes>
         </>
     )
 }

@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from 'react'
 import { ArcGISMap, MapView, Point, FeatureLayer } from './widget/library'
-import './App.css'
+import '../App.css'
 import WidgetPad from './widget/widgetPad'
 // import { ViewContext } from './context/ViewContext'
 interface mapContainer extends React.ComponentPropsWithRef<'div'> {
