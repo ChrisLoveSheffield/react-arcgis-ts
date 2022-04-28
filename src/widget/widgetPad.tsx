@@ -75,6 +75,7 @@ function useWidgetManager(state: WigetState) {
 
 const WidgetPad: React.FC<BaseWigetOption> = ({ esri_map }) => {
     const { wgtState, setWigetState } = useWidgetManager(defaultState)
+
     return (
         <>
             <CalciteShell>
@@ -101,7 +102,7 @@ const WidgetPad: React.FC<BaseWigetOption> = ({ esri_map }) => {
                             key={'_' + wgt.text}
                             handle="strong"
                             bounds="body"
-                            defaultPosition={{ x: 60, y: 15 + 48 * i }}
+                            defaultPosition={{ x: 60, y: 15 + 49 * i }}
                         >
                             <div className="no-cursor widgetDialog">
                                 <Toast

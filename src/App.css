@@ -20,7 +20,7 @@ calcite-action{
   height: 100%;
   width: 100%;
 }
-body{
+#MapBody{
   position:absolute;
   top:0px;
   right:0px;
