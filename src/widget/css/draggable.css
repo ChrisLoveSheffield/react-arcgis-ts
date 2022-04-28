@@ -19,7 +19,7 @@
   }
   .widgetDialog{
     width:min-content !important;
-    position: absolute
+    position:absolute;
   }
   .widgetHeader{
     width: 88%;

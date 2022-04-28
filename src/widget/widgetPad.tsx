@@ -101,7 +101,7 @@ const WidgetPad: React.FC<BaseWigetOption> = ({ esri_map }) => {
                             key={'_' + wgt.text}
                             handle="strong"
                             bounds="body"
-                            defaultPosition={{ x: 60 + i * 400, y: 15 }}
+                            defaultPosition={{ x: 60, y: 15 + 48 * i }}
                         >
                             <div className="no-cursor widgetDialog">
                                 <Toast
