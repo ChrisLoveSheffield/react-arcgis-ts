@@ -33,7 +33,7 @@ const loginCheck = () => {
                         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                         <Navbar.Collapse id="responsive-navbar-nav">
                             <Nav className="me-auto">
-                                <Nav.Link href="/About">About</Nav.Link>
+                                <Nav.Link href="/Map">Map</Nav.Link>
                                 <Nav.Link href="/pricing">Pricing</Nav.Link>
                             </Nav>
                             <Nav>

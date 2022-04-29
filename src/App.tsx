@@ -1,12 +1,14 @@
 import MapViewConatainer from './MapView/MapView'
 import { Route, Routes } from 'react-router-dom'
+import HomePage from './HomePage/HomePage'
 
 const App = () => {
     return (
         <>
             <Routes>
+                <Route path="/" element={<HomePage></HomePage>} />
                 <Route
-                    path="/"
+                    path="/Map"
                     element={
                         <div id="MapBody">
                             <MapViewConatainer basemap="gray-vector" zoom="12" />
