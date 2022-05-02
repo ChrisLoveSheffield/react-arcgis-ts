@@ -20,6 +20,16 @@ calcite-action{
   height: 100%;
   width: 100%;
 }
+#MyViewerDiv{
+  position:absolute;
+  top: 56px;
+  right:0px;
+  bottom:0px;
+  left:0px;
+  overflow:hidden;
+  height: (100% -56px);
+  width: 100%;
+}
 #MapBody{
   position:absolute;
   top: 56px;
@@ -27,7 +37,7 @@ calcite-action{
   bottom:0px;
   left:0px;
   overflow:hidden;
-  height: 100%;
+  height: (100% -56px);
   width: 100%;
 }
 .App {

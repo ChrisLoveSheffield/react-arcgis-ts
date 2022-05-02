@@ -13,7 +13,7 @@
         },
         {
             "name": "Attach to Edge",
-            "port": 9222,
+            "port": 3000,
             "request": "attach",
             "type": "pwa-msedge",
             "urlFilter": "http://localhost:3000/*", // use urlFilter instead of url!
