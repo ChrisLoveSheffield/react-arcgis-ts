@@ -10,7 +10,9 @@ class Viewer extends Component {
         // https://stackoverflow.com/questions/55119377/react-js-constructor-called-twice
         super(props)
         this.embedURLfromA360 =
-            'https://myhub.autodesk360.com/ue29c89b7/shares/public/SH7f1edQT22b515c761e81af7c91890bcea5?mode=embed' // Revit file (A360/Forge/Napa.rvt)
+            'https://myhub.autodesk360.com/ue2970ee2/shares/public/SH919a0QTf3c32634dcf7d90e49034aabd19?mode=embed' // Revit file
+        // 'https://autodesk3743.autodesk360.com/shares/public/SHabee1QT1a327cf2b7a174096650e4352bf?mode=embed'
+        //'https://myhub.autodesk360.com/ue29c89b7/shares/public/SH7f1edQT22b515c761e81af7c91890bcea5?mode=embed' // Revit file (A360/Forge/Napa.rvt)
     }
 
     render() {
@@ -92,8 +94,8 @@ class Viewer extends Component {
     async onDocumentLoadSuccess(doc: Autodesk.Viewing.Document) {
         // A document contains references to 3D and 2D viewables.
         var items = doc.getRoot().search({
-            type: 'geometry',
-            role: '2d',
+            type: 'geometry', //'view',
+            // role: '3d',
         })
         if (items.length === 0) {
             console.error('Document contains no viewables.')
@@ -109,31 +111,34 @@ class Viewer extends Component {
         MyExtension.register()
         this.viewer.loadExtension('MyExtension')
 
-        var options2 = {}
-        let that: any = this
-        this.viewer.loadDocumentNode(doc, items[1], options2).then(function (model1: Autodesk.Viewing.Model) {
-            var options1: any = {}
-            options1.keepCurrentModels = true
+        // var options2 = {}
+        // let that: any = this
+        var options1: any = {}
+        options1.keepCurrentModels = true
+        this.viewer.loadDocumentNode(doc, items[0], options1)
+        // this.viewer.loadDocumentNode(doc, items[1], options2).then(function (model1: Autodesk.Viewing.Model) {
+        //     var options1: any = {}
+        //     options1.keepCurrentModels = true
 
-            that.viewer.loadDocumentNode(doc, items[0], options1).then(function (model2: Autodesk.Viewing.Model) {
-                let extensionConfig: any = {}
-                extensionConfig['mimeType'] = 'application/vnd.autodesk.revit'
-                extensionConfig['primaryModels'] = [model1]
-                extensionConfig['diffModels'] = [model2]
-                extensionConfig['diffMode'] = 'overlay'
-                extensionConfig['versionA'] = '2'
-                extensionConfig['versionB'] = '1'
+        //     that.viewer.loadDocumentNode(doc, items[0], options1).then(function (model2: Autodesk.Viewing.Model) {
+        //         let extensionConfig: any = {}
+        //         extensionConfig['mimeType'] = 'application/vnd.autodesk.revit'
+        //         extensionConfig['primaryModels'] = [model1]
+        //         extensionConfig['diffModels'] = [model2]
+        //         extensionConfig['diffMode'] = 'overlay'
+        //         extensionConfig['versionA'] = '2'
+        //         extensionConfig['versionB'] = '1'
 
-                that.viewer
-                    .loadExtension('Autodesk.DiffTool', extensionConfig)
-                    .then((res: any) => {
-                        console.log(res)
-                    })
-                    .catch(function (err: any) {
-                        console.log(err)
-                    })
-            })
-        })
+        //         that.viewer
+        //             .loadExtension('Autodesk.DiffTool', extensionConfig)
+        //             .then((res: any) => {
+        //                 console.log(res)
+        //             })
+        //             .catch(function (err: any) {
+        //                 console.log(err)
+        //             })
+        //     })
+        // })
     }
 
     onDocumentLoadError(errorCode: Autodesk.Viewing.ErrorCodes) {}
