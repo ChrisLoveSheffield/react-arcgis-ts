@@ -18,6 +18,20 @@ function HomePageCarousel() {
             <Carousel.Item>
                 <img
                     className="w-50 d-block "
+                    src={img3}
+                    style={{ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, margin: 'auto' }}
+                    alt="First slide"
+                ></img>
+                <img className="d-block w-10 custromCarousel" src={img} alt="Third slide" />
+
+                <Carousel.Caption>
+                    <h3>AECOM</h3>
+                    <p>Digital Solution Software Developer</p>
+                </Carousel.Caption>
+            </Carousel.Item>
+            <Carousel.Item>
+                <img
+                    className="w-50 d-block "
                     src={img1}
                     style={{ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, margin: 'auto' }}
                     alt="First slide"
@@ -40,20 +54,6 @@ function HomePageCarousel() {
                 <Carousel.Caption>
                     <h3>Esri Arcgis</h3>
                     <p>Map Javascript Api</p>
-                </Carousel.Caption>
-            </Carousel.Item>
-            <Carousel.Item>
-                <img
-                    className="w-50 d-block "
-                    src={img3}
-                    style={{ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, margin: 'auto' }}
-                    alt="First slide"
-                ></img>
-                <img className="d-block w-10 custromCarousel" src={img} alt="Third slide" />
-
-                <Carousel.Caption>
-                    <h3>AECOM</h3>
-                    <p>Digital Solution Software Developer</p>
                 </Carousel.Caption>
             </Carousel.Item>
         </Carousel>

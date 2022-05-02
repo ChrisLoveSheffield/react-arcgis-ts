@@ -10,9 +10,9 @@ class Viewer extends Component {
         // https://stackoverflow.com/questions/55119377/react-js-constructor-called-twice
         super(props)
         this.embedURLfromA360 =
-            'https://myhub.autodesk360.com/ue2970ee2/shares/public/SH919a0QTf3c32634dcf7d90e49034aabd19?mode=embed' // Revit file
-        // 'https://autodesk3743.autodesk360.com/shares/public/SHabee1QT1a327cf2b7a174096650e4352bf?mode=embed'
-        //'https://myhub.autodesk360.com/ue29c89b7/shares/public/SH7f1edQT22b515c761e81af7c91890bcea5?mode=embed' // Revit file (A360/Forge/Napa.rvt)
+            // 'https://myhub.autodesk360.com/ue2970ee2/shares/public/SH919a0QTf3c32634dcf7d90e49034aabd19?mode=embed' // Revit file
+            // 'https://autodesk3743.autodesk360.com/shares/public/SHabee1QT1a327cf2b7a174096650e4352bf?mode=embed'
+            'https://myhub.autodesk360.com/ue29c89b7/shares/public/SH7f1edQT22b515c761e81af7c91890bcea5?mode=embed' // Revit file (A360/Forge/Napa.rvt)
     }
 
     render() {
@@ -94,8 +94,8 @@ class Viewer extends Component {
     async onDocumentLoadSuccess(doc: Autodesk.Viewing.Document) {
         // A document contains references to 3D and 2D viewables.
         var items = doc.getRoot().search({
-            type: 'geometry', //'view',
-            // role: '3d',
+            type: 'view', //'view',
+            role: '3d',
         })
         if (items.length === 0) {
             console.error('Document contains no viewables.')
@@ -111,11 +111,32 @@ class Viewer extends Component {
         MyExtension.register()
         this.viewer.loadExtension('MyExtension')
 
+        // loading builder three add custom stuff
+        // await this.viewer.loadExtension('Autodesk.Viewing.SceneBuilder')
+        // let ext: any = this.viewer.getExtension('Autodesk.Viewing.SceneBuilder')
+        // let modelBuilder = await ext.addNewModel({
+        //     conserveMemory: false,
+        //     modelNameOverride: 'My Model Name',
+        // })
+        // let purple = new THREE.MeshPhongMaterial({
+        //     color: 0xffffff,
+        // })
+        // modelBuilder.addMaterial('purple', purple)
+        // let box = new THREE.BufferGeometry().fromGeometry(new THREE.BoxGeometry(10, 10, 10))
+        // let id = modelBuilder.addGeometry(box)
+        // const transform = new THREE.Matrix4().compose(
+        //     new THREE.Vector3(-15, 0, 0),
+        //     new THREE.Quaternion(0, 0, 0, 1),
+        //     new THREE.Vector3(1, 1, 1)
+        // )
+        // modelBuilder.addFragment(1, 'purple', transform)
+
+        ///
+
+        this.viewer.loadDocumentNode(doc, items[0], { keepCurrentModels: true })
+
         // var options2 = {}
         // let that: any = this
-        var options1: any = {}
-        options1.keepCurrentModels = true
-        this.viewer.loadDocumentNode(doc, items[0], options1)
         // this.viewer.loadDocumentNode(doc, items[1], options2).then(function (model1: Autodesk.Viewing.Model) {
         //     var options1: any = {}
         //     options1.keepCurrentModels = true
