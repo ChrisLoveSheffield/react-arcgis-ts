@@ -41,6 +41,7 @@ relative topic for ts
 -   [Arcgis API for Javascript: Building Apps with React](https://www.youtube.com/watch?v=0fJmKSWURyU&ab_channel=EsriEvents)
 -   [git-react-javascr]()ipt
 -   [react]()
+-   [forge](https://forge.autodesk.com/blog/react-typescript-showing-shared-model)
 
 In the project directory, you can run:
 

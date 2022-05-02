@@ -47,5 +47,11 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/forge-apis": "^0.8.3",
+    "@types/forge-viewer": "^7.61.0",
+    "@types/jquery": "^3.5.14",
+    "@types/three": "^0.139.0"
   }
 }

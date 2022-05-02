@@ -1,6 +1,7 @@
 import MapViewConatainer from './MapView/MapView'
 import { Route, Routes } from 'react-router-dom'
 import HomePage from './HomePage/HomePage'
+import Viewer from './Forge/Viewer'
 
 const App = () => {
     return (
@@ -8,14 +9,14 @@ const App = () => {
             <Routes>
                 <Route path="/" element={<HomePage></HomePage>} />
                 <Route
-                    path="/Map"
+                    path="/map"
                     element={
                         <div id="MapBody">
                             <MapViewConatainer basemap="gray-vector" zoom="12" />
                         </div>
                     }
                 />
-                <Route path="/About" element={123} />
+                <Route path="/forge" element={<Viewer />} />
             </Routes>
         </>
     )
