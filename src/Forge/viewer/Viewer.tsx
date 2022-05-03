@@ -69,26 +69,46 @@ class Viewer extends Component {
     }
 
     getURN(onURNCallback: any) {
-        $.get({
-            url: this.embedURLfromA360.replace('public', 'metadata').replace('mode=embed', ''),
-            dataType: 'json',
-            success: function (metadata) {
+        fetch(this.embedURLfromA360.replace('public', 'metadata').replace('mode=embed', ''))
+            .then((e) => e.json())
+            .then((metadata) => {
                 if (onURNCallback) {
                     let urn = btoa(metadata.success.body.urn).replace('/', '_').replace('=', '')
                     onURNCallback(urn)
                 }
-            },
-        })
+            })
+
+        // $.get({
+        //     url: this.embedURLfromA360.replace('public', 'metadata').replace('mode=embed', ''),
+        //     dataType: 'json',
+        //     success: function (metadata) {
+        //         if (onURNCallback) {
+        //             let urn = btoa(metadata.success.body.urn).replace('/', '_').replace('=', '')
+        //             onURNCallback(urn)
+        //             console.log(urn)
+        //         }
+        //     },
+        // })
     }
 
     getForgeToken(onTokenCallback: any) {
-        $.post({
-            url: this.embedURLfromA360.replace('public', 'sign').replace('mode=embed', 'oauth2=true'),
-            data: '{}',
-            success: function (oauth) {
-                if (onTokenCallback) onTokenCallback(oauth.accessToken, oauth.validitySeconds)
-            },
+        fetch(this.embedURLfromA360.replace('public', 'sign').replace('mode=embed', 'oauth2=true'), {
+            method: 'post',
+            body: '{}',
         })
+            .then((e) => e.json())
+            .then((oauth) => {
+                console.log(oauth)
+                if (onTokenCallback) onTokenCallback(oauth.accessToken, oauth.validitySeconds)
+            })
+        // $.post({
+        //     url: this.embedURLfromA360.replace('public', 'sign').replace('mode=embed', 'oauth2=true'),
+        //     data: '{}',
+        //     success: function (oauth) {
+        //         console.log(oauth)
+        //         if (onTokenCallback) onTokenCallback(oauth.accessToken, oauth.validitySeconds)
+        //     },
+        // })
     }
 
     async onDocumentLoadSuccess(doc: Autodesk.Viewing.Document) {

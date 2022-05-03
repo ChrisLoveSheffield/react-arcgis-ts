@@ -1,7 +1,7 @@
 import MapViewConatainer from './MapView/MapView'
 import { Route, Routes } from 'react-router-dom'
 import HomePage from './HomePage/HomePage'
-import Viewer from './Forge/Viewer'
+import Viewer from './Forge/viewer/Viewer'
 
 const App = () => {
     return (
