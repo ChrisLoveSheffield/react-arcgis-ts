@@ -16,7 +16,11 @@ class Viewer extends Component {
     }
 
     render() {
-        return <div className="Viewer" id="MyViewerDiv" />
+        return (
+            <>
+                <div className="Viewer" id="MyViewerDiv" />
+            </>
+        )
     }
 
     public componentDidMount() {
@@ -98,7 +102,7 @@ class Viewer extends Component {
         })
             .then((e) => e.json())
             .then((oauth) => {
-                console.log(oauth)
+                // console.log(oauth)
                 if (onTokenCallback) onTokenCallback(oauth.accessToken, oauth.validitySeconds)
             })
         // $.post({
@@ -122,9 +126,10 @@ class Viewer extends Component {
             return
         }
 
-        var viewerDiv: any = document.getElementById('MyViewerDiv')
-        this.viewer = new Autodesk.Viewing.GuiViewer3D(viewerDiv)
+        var viewerDiv: any = document.querySelector('#MyViewerDiv')
+        this.viewer = new Autodesk.Viewing.GuiViewer3D(viewerDiv, { theme: 'light-theme' })
         this.viewer.start()
+        console.log(this.viewer)
 
         // loading it dynamically
         const { MyExtension } = await import('./MyExtension')
@@ -152,7 +157,7 @@ class Viewer extends Component {
         // modelBuilder.addFragment(1, 'purple', transform)
 
         ///
-
+        // var defaultModel = viewerDocument.getRoot().getDefaultGeometry();
         this.viewer.loadDocumentNode(doc, items[0], { keepCurrentModels: true })
 
         // var options2 = {}
