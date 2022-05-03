@@ -43,6 +43,7 @@ relative topic for ts
 -   [react]()
 -   [forge](https://forge.autodesk.com/blog/react-typescript-showing-shared-model)
 -   [forge-demo](https://forge-rcdb.autodesk.io/configurator)
+-   [forge-learning](https://learnforge.autodesk.io/#/)
 
 In the project directory, you can run:
 

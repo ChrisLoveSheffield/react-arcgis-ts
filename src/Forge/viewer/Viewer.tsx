@@ -118,7 +118,7 @@ class Viewer extends Component {
     async onDocumentLoadSuccess(doc: Autodesk.Viewing.Document) {
         // A document contains references to 3D and 2D viewables.
         var items = doc.getRoot().search({
-            type: 'view', //'view',
+            type: 'geometry', //'view', //'view',
             role: '3d',
         })
         if (items.length === 0) {
