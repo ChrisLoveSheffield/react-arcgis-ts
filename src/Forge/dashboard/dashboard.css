@@ -12,3 +12,8 @@
     padding: 3%;
     display: block;
 }
+#dashboardPanel{
+    position: absolute;
+    height: calc(100vh - 100px);
+    width: fit-content;
+}

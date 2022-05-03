@@ -1,25 +1,31 @@
 import { Component } from 'react'
 import './Viewer.css'
+import '../dashboard/dashboard.css'
+import { Chart, registerables } from 'chart.js'
+
+Chart.register(...registerables)
+
 // https://codepen.io/jaimerosales/pen/WZdzmN?editors=1010
 class Viewer extends Component {
     embedURLfromA360: string
     viewer?: Autodesk.Viewing.GuiViewer3D
     _modelData: any = {
         hasProperty(propertyName: string) {
-            return this._modelData[propertyName] !== undefined
+            return this[propertyName] !== undefined
         },
         getLabels(propertyName: string): string[] {
-            return Object.keys(this._modelData[propertyName])
+            return Object.keys(this[propertyName])
         },
 
-        DatagetCountInstances(propertyName: string) {
-            return Object.keys(this._modelData[propertyName]).map((key) => this._modelData[propertyName][key].length)
+        getCountInstances(propertyName: string) {
+            return Object.keys(this[propertyName]).map((key) => this[propertyName][key].length)
         },
 
         getIds(propertyName: string, propertyValue: string) {
-            return this._modelData[propertyName][propertyValue]
+            return this[propertyName][propertyValue]
         },
     }
+    chart?: Chart
 
     constructor(props: any) {
         // Note: in strict mode this will be called twice
@@ -35,6 +41,9 @@ class Viewer extends Component {
         return (
             <>
                 <div className="Viewer" id="MyViewerDiv" />
+                <div id="dashboardPanel">
+                    <canvas id="piechart"></canvas>
+                </div>
             </>
         )
     }
@@ -174,7 +183,7 @@ class Viewer extends Component {
         ///
         // var defaultModel = viewerDocument.getRoot().getDefaultGeometry();
         await this.viewer.loadDocumentNode(doc, items[0], { keepCurrentModels: true })
-        this.initalizeModelData(() => console.log(this._modelData))
+        this.initalizeModelData(() => this.drawChart())
         // var options2 = {}
         // let that: any = this
         // this.viewer.loadDocumentNode(doc, items[1], options2).then(function (model1: Autodesk.Viewing.Model) {
@@ -224,20 +233,22 @@ class Viewer extends Component {
                             if (!prop.displayValue.length) return // let's not categorize properties that store numbers
 
                             // some adjustments for revit:
-                            prop.displayValue = prop.displayValue.replace('Revit ', '') // remove this Revit prefix
-                            if (prop.displayValue.indexOf('<') === 0) return // skip categories that start with <
+                            if (prop.displayValue.includes('Revit')) {
+                                prop.displayValue = prop.displayValue.replace('Revit ', '') // remove this Revit prefix
+                                if (prop.displayValue.indexOf('<') === 0) return // skip categories that start with <
 
-                            // ok, now let's organize the data into this hash table
-                            if (!this._modelData[prop.displayName] || this._modelData[prop.displayName] === null)
-                                this._modelData[prop.displayName] = {}
+                                // ok, now let's organize the data into this hash table
+                                if (!this._modelData[prop.displayName] || this._modelData[prop.displayName] === null)
+                                    this._modelData[prop.displayName] = {}
 
-                            if (
-                                !this._modelData[prop.displayName][prop.displayValue] ||
-                                this._modelData[prop.displayName][prop.displayValue] === null
-                            )
-                                this._modelData[prop.displayName][prop.displayValue] = []
+                                if (
+                                    !this._modelData[prop.displayName][prop.displayValue] ||
+                                    this._modelData[prop.displayName][prop.displayValue] === null
+                                )
+                                    this._modelData[prop.displayName][prop.displayValue] = []
 
-                            this._modelData[prop.displayName][prop.displayValue].push(dbId)
+                                this._modelData[prop.displayName][prop.displayValue].push(dbId)
+                            }
                         } catch (error) {
                             console.log(error)
                         }
@@ -246,6 +257,58 @@ class Viewer extends Component {
                     if (--count === 0 && callback) callback()
                 })
             })
+        })
+    }
+    generateColors(count: number) {
+        var background = []
+        var borders = []
+        for (var i = 0; i < count; i++) {
+            var r = Math.round(Math.random() * 255)
+            var g = Math.round(Math.random() * 255)
+            var b = Math.round(Math.random() * 255)
+            background.push('rgba(' + r + ', ' + g + ', ' + b + ', 0.2)')
+            borders.push('rgba(' + r + ', ' + g + ', ' + b + ', 0.2)')
+        }
+        return { background: background, borders: borders }
+    }
+
+    drawChart() {
+        let temp: any = document.querySelector('#piechart')
+        let ctx: any
+        if (temp.getContext) {
+            ctx = temp.getContext('2d')
+        }
+
+        var colors = this.generateColors(this._modelData.getLabels('Category').length)
+
+        this.chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: this._modelData.getLabels('Category'),
+                datasets: [
+                    {
+                        data: this._modelData.getCountInstances('Category'),
+                        backgroundColor: colors.background,
+                        borderColor: colors.borders,
+                        borderWidth: 10,
+                    },
+                ],
+            },
+            options: {
+                scales: {
+                    y: { beginAtZero: true },
+                },
+                // legend: {
+                //     display: false,
+                // },
+                onClick: (evt: any, item: any) => {
+                    if (this.chart) {
+                        this.viewer?.isolate(
+                            this._modelData.getIds('Category', this.chart.data.labels?.[item[0].index])
+                        )
+                    }
+                },
+            },
         })
     }
 }
