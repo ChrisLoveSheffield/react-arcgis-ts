@@ -4,6 +4,22 @@ import './Viewer.css'
 class Viewer extends Component {
     embedURLfromA360: string
     viewer?: Autodesk.Viewing.GuiViewer3D
+    _modelData: any = {
+        hasProperty(propertyName: string) {
+            return this._modelData[propertyName] !== undefined
+        },
+        getLabels(propertyName: string): string[] {
+            return Object.keys(this._modelData[propertyName])
+        },
+
+        DatagetCountInstances(propertyName: string) {
+            return Object.keys(this._modelData[propertyName]).map((key) => this._modelData[propertyName][key].length)
+        },
+
+        getIds(propertyName: string, propertyValue: string) {
+            return this._modelData[propertyName][propertyValue]
+        },
+    }
 
     constructor(props: any) {
         // Note: in strict mode this will be called twice
@@ -129,7 +145,6 @@ class Viewer extends Component {
         var viewerDiv: any = document.querySelector('#MyViewerDiv')
         this.viewer = new Autodesk.Viewing.GuiViewer3D(viewerDiv, { theme: 'light-theme' })
         this.viewer.start()
-        console.log(this.viewer)
 
         // loading it dynamically
         const { MyExtension } = await import('./MyExtension')
@@ -158,8 +173,8 @@ class Viewer extends Component {
 
         ///
         // var defaultModel = viewerDocument.getRoot().getDefaultGeometry();
-        this.viewer.loadDocumentNode(doc, items[0], { keepCurrentModels: true })
-
+        await this.viewer.loadDocumentNode(doc, items[0], { keepCurrentModels: true })
+        this.initalizeModelData(() => console.log(this._modelData))
         // var options2 = {}
         // let that: any = this
         // this.viewer.loadDocumentNode(doc, items[1], options2).then(function (model1: Autodesk.Viewing.Model) {
@@ -188,6 +203,51 @@ class Viewer extends Component {
     }
 
     onDocumentLoadError(errorCode: Autodesk.Viewing.ErrorCodes) {}
+
+    initalizeModelData(callback?: Function) {
+        this.viewer?.getObjectTree((tree) => {
+            var leaves: any[] = []
+            tree.enumNodeChildren(
+                tree.getRootId(),
+                function (dbId) {
+                    if (tree.getChildCount(dbId) === 0) {
+                        leaves.push(dbId)
+                    }
+                },
+                true
+            )
+            let count = leaves.length
+            leaves.forEach((dbId) => {
+                this.viewer?.getProperties(dbId, (props) => {
+                    props.properties.forEach((prop) => {
+                        try {
+                            if (!prop.displayValue.length) return // let's not categorize properties that store numbers
+
+                            // some adjustments for revit:
+                            prop.displayValue = prop.displayValue.replace('Revit ', '') // remove this Revit prefix
+                            if (prop.displayValue.indexOf('<') === 0) return // skip categories that start with <
+
+                            // ok, now let's organize the data into this hash table
+                            if (!this._modelData[prop.displayName] || this._modelData[prop.displayName] === null)
+                                this._modelData[prop.displayName] = {}
+
+                            if (
+                                !this._modelData[prop.displayName][prop.displayValue] ||
+                                this._modelData[prop.displayName][prop.displayValue] === null
+                            )
+                                this._modelData[prop.displayName][prop.displayValue] = []
+
+                            this._modelData[prop.displayName][prop.displayValue].push(dbId)
+                        } catch (error) {
+                            console.log(error)
+                        }
+                    })
+
+                    if (--count === 0 && callback) callback()
+                })
+            })
+        })
+    }
 }
 
 export default Viewer
