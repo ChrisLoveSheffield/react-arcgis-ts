@@ -224,6 +224,7 @@ class Viewer extends Component {
 
     onDocumentLoadError(errorCode: Autodesk.Viewing.ErrorCodes) {}
 
+    //#region Dashboard Pan Method
     initalizeModelData(callback?: Function) {
         this.viewer?.getObjectTree((tree) => {
             var leaves: any[] = []
@@ -326,6 +327,7 @@ class Viewer extends Component {
         })
         this.setState({ viewer: '65%', dashboardPanel: '35%' })
     }
+    //#endregion
 }
 
 export default Viewer
