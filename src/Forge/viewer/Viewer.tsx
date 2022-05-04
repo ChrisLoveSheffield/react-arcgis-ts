@@ -1,7 +1,8 @@
 import { Component } from 'react'
 import './Viewer.css'
 import '../dashboard/dashboard.css'
-import { Chart, registerables } from 'chart.js'
+import { Chart, registerables, ChartTypeRegistry } from 'chart.js'
+import { Card } from 'react-bootstrap'
 
 Chart.register(...registerables)
 Chart.defaults.plugins.legend.display = false
@@ -26,7 +27,7 @@ class Viewer extends Component {
             return this[propertyName][propertyValue]
         },
     }
-    chart?: Chart
+    chartMap = new Map<string, Chart>()
 
     state: {
         viewer: string
@@ -52,8 +53,24 @@ class Viewer extends Component {
         return (
             <>
                 <div className="Viewer transition-width" style={{ width: this.state.viewer }} id="MyViewerDiv" />
+
                 <div id="dashboardPanel" style={{ width: this.state.dashboardPanel }} className="transition-width">
-                    <canvas id="piechart"></canvas>
+                    <Card>
+                        <Card.Header>Category</Card.Header>
+                        <Card.Body>
+                            <blockquote className="blockquote mb-0">
+                                <canvas id="barchart"></canvas>
+                            </blockquote>
+                        </Card.Body>
+                    </Card>
+                    <Card>
+                        <Card.Header>Base Level</Card.Header>
+                        <Card.Body>
+                            <blockquote className="blockquote mb-0">
+                                <canvas id="doughnutchart"></canvas>
+                            </blockquote>
+                        </Card.Body>
+                    </Card>
                 </div>
             </>
         )
@@ -245,22 +262,21 @@ class Viewer extends Component {
                             if (!prop.displayValue.length) return // let's not categorize properties that store numbers
 
                             // some adjustments for revit:
-                            if (prop.displayValue.includes('Revit')) {
-                                prop.displayValue = prop.displayValue.replace('Revit ', '') // remove this Revit prefix
-                                if (prop.displayValue.indexOf('<') === 0) return // skip categories that start with <
 
-                                // ok, now let's organize the data into this hash table
-                                if (!this._modelData[prop.displayName] || this._modelData[prop.displayName] === null)
-                                    this._modelData[prop.displayName] = {}
+                            prop.displayValue = prop.displayValue.replace('Revit ', '') // remove this Revit prefix
+                            if (prop.displayValue.indexOf('<') === 0) return // skip categories that start with <
 
-                                if (
-                                    !this._modelData[prop.displayName][prop.displayValue] ||
-                                    this._modelData[prop.displayName][prop.displayValue] === null
-                                )
-                                    this._modelData[prop.displayName][prop.displayValue] = []
+                            // ok, now let's organize the data into this hash table
+                            if (!this._modelData[prop.displayName] || this._modelData[prop.displayName] === null)
+                                this._modelData[prop.displayName] = {}
 
-                                this._modelData[prop.displayName][prop.displayValue].push(dbId)
-                            }
+                            if (
+                                !this._modelData[prop.displayName][prop.displayValue] ||
+                                this._modelData[prop.displayName][prop.displayValue] === null
+                            )
+                                this._modelData[prop.displayName][prop.displayValue] = []
+
+                            this._modelData[prop.displayName][prop.displayValue].push(dbId)
                         } catch (error) {
                             console.log(error)
                         }
@@ -270,6 +286,7 @@ class Viewer extends Component {
                 })
             })
         })
+        console.log(this._modelData)
     }
     generateColors(count: number) {
         var background = []
@@ -285,46 +302,53 @@ class Viewer extends Component {
     }
 
     drawChart() {
-        let temp: any = document.querySelector('#piechart')
-        let ctx: any
-        if (temp.getContext) {
-            ctx = temp.getContext('2d')
-        }
-
-        var colors = this.generateColors(this._modelData.getLabels('Category').length)
-
-        this.chart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: this._modelData.getLabels('Category'),
-                datasets: [
-                    {
-                        data: this._modelData.getCountInstances('Category'),
-                        backgroundColor: colors.background,
-                        borderColor: colors.borders,
-                        borderWidth: 1,
+        const chartAction = (type: keyof ChartTypeRegistry, prop: string, aspectRatio: number | undefined) => {
+            let temp: any = document.querySelector(`#${type}chart`)
+            let ctx: any
+            if (temp.getContext) {
+                ctx = temp.getContext('2d')
+            }
+            var colors = this.generateColors(this._modelData.getLabels(prop).length)
+            this.chartMap.set(
+                type,
+                new Chart(ctx, {
+                    type: type,
+                    data: {
+                        labels: this._modelData.getLabels(prop),
+                        datasets: [
+                            {
+                                data: this._modelData.getCountInstances(prop),
+                                backgroundColor: colors.background,
+                                borderColor: colors.borders,
+                                borderWidth: 1,
+                            },
+                        ],
                     },
-                ],
-            },
-            options: {
-                layout: {
-                    padding: 20,
-                },
-                scales: {
-                    y: { beginAtZero: true },
-                },
-                // legend: {
-                //     display: false,
-                // },
-                onClick: (evt: any, item: any) => {
-                    if (this.chart) {
-                        this.viewer?.isolate(
-                            this._modelData.getIds('Category', this.chart.data.labels?.[item[0].index])
-                        )
-                    }
-                },
-            },
-        })
+                    options: {
+                        responsive: true,
+                        aspectRatio: aspectRatio,
+                        layout: {
+                            padding: 20,
+                        },
+                        scales: {
+                            y: { beginAtZero: true },
+                        },
+                        // legend: {
+                        //     display: false,
+                        // },
+                        onClick: (evt: any, item: any) => {
+                            if (this.chartMap) {
+                                this.viewer?.isolate(
+                                    this._modelData.getIds(prop, this.chartMap.get(type)?.data.labels?.[item[0].index])
+                                )
+                            }
+                        },
+                    },
+                })
+            )
+        }
+        chartAction('bar', 'Category', 2)
+        chartAction('doughnut', 'Base Constraint', 1.5)
         this.setState({ viewer: '65%', dashboardPanel: '35%' })
     }
     //#endregion
