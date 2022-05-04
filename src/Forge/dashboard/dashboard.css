@@ -8,12 +8,14 @@
 }
 
 .dashboardPanel {
-    width: 100%;
-    padding: 3%;
-    display: block;
+    width: 40%;
 }
 #dashboardPanel{
     position: absolute;
+    right: 0;
     height: calc(100vh - 100px);
-    width: fit-content;
+    
+}
+.ViewerDashboardMode{
+    width: 60%;
 }

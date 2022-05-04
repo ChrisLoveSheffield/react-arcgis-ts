@@ -1,5 +1,15 @@
 #MyViewerDiv {
-
   background-color: #f0f8ff;
   z-index: 0;
+}
+
+#MyViewerDiv{
+  position:absolute;
+  top: 56px;
+  right:0px;
+  bottom:0px;
+  left:0px;
+  overflow:hidden;
+  height: (100% -56px);
+  width: 100%;
 }

@@ -4,6 +4,7 @@ import '../dashboard/dashboard.css'
 import { Chart, registerables } from 'chart.js'
 
 Chart.register(...registerables)
+Chart.defaults.plugins.legend.display = false
 
 // https://codepen.io/jaimerosales/pen/WZdzmN?editors=1010
 class Viewer extends Component {
@@ -27,10 +28,20 @@ class Viewer extends Component {
     }
     chart?: Chart
 
+    state: {
+        viewer: string
+        dashboardPanel: string
+    }
+
     constructor(props: any) {
         // Note: in strict mode this will be called twice
         // https://stackoverflow.com/questions/55119377/react-js-constructor-called-twice
         super(props)
+        this.state = {
+            viewer: '100%',
+            dashboardPanel: '0%',
+        }
+
         this.embedURLfromA360 =
             // 'https://myhub.autodesk360.com/ue2970ee2/shares/public/SH919a0QTf3c32634dcf7d90e49034aabd19?mode=embed' // Revit file
             // 'https://autodesk3743.autodesk360.com/shares/public/SHabee1QT1a327cf2b7a174096650e4352bf?mode=embed'
@@ -40,8 +51,8 @@ class Viewer extends Component {
     render() {
         return (
             <>
-                <div className="Viewer" id="MyViewerDiv" />
-                <div id="dashboardPanel">
+                <div className="Viewer transition-width" style={{ width: this.state.viewer }} id="MyViewerDiv" />
+                <div id="dashboardPanel" style={{ width: this.state.dashboardPanel }} className="transition-width">
                     <canvas id="piechart"></canvas>
                 </div>
             </>
@@ -290,11 +301,14 @@ class Viewer extends Component {
                         data: this._modelData.getCountInstances('Category'),
                         backgroundColor: colors.background,
                         borderColor: colors.borders,
-                        borderWidth: 10,
+                        borderWidth: 1,
                     },
                 ],
             },
             options: {
+                layout: {
+                    padding: 20,
+                },
                 scales: {
                     y: { beginAtZero: true },
                 },
@@ -310,6 +324,7 @@ class Viewer extends Component {
                 },
             },
         })
+        this.setState({ viewer: '65%', dashboardPanel: '35%' })
     }
 }
 
