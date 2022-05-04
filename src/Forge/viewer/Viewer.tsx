@@ -39,8 +39,8 @@ class Viewer extends Component {
         // https://stackoverflow.com/questions/55119377/react-js-constructor-called-twice
         super(props)
         this.state = {
-            viewer: '100%',
-            dashboardPanel: '0%',
+            viewer: '70%',
+            dashboardPanel: '30%',
         }
 
         this.embedURLfromA360 =
@@ -52,8 +52,9 @@ class Viewer extends Component {
     render() {
         return (
             <>
-                <div className="Viewer transition-width" style={{ width: this.state.viewer }} id="MyViewerDiv" />
-
+                <div className="Viewer transition-width" style={{ width: this.state.viewer }}>
+                    <div id="MyViewerDiv"></div>
+                </div>
                 <div id="dashboardPanel" style={{ width: this.state.dashboardPanel }} className="transition-width">
                     <Card>
                         <Card.Header>Category</Card.Header>
@@ -337,8 +338,11 @@ class Viewer extends Component {
                         //     display: false,
                         // },
                         onClick: (evt: any, item: any) => {
-                            if (this.chartMap) {
+                            if (this.chartMap && this.viewer) {
                                 this.viewer?.isolate(
+                                    this._modelData.getIds(prop, this.chartMap.get(type)?.data.labels?.[item[0].index])
+                                )
+                                this.viewer?.fitToView(
                                     this._modelData.getIds(prop, this.chartMap.get(type)?.data.labels?.[item[0].index])
                                 )
                             }
@@ -349,7 +353,8 @@ class Viewer extends Component {
         }
         chartAction('bar', 'Category', 2)
         chartAction('doughnut', 'Base Constraint', 1.5)
-        this.setState({ viewer: '65%', dashboardPanel: '35%' })
+        this.setState({ viewer: '70%', dashboardPanel: '30%' })
+        this.viewer?.resize()
     }
     //#endregion
 }
