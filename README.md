@@ -39,15 +39,16 @@ relative topic for ts
 -   [Create a custom widget | Sample Code | ArcGIS API for JavaScript 4.23 | ArcGIS Developer](https://developers.arcgis.com/javascript/latest/sample-code/widgets-custom-widget/)
 -   [jsapi-resources/esm-samples/jsapi-custom-widget at master · Esri/jsapi-resources (github.com)](https://github.com/Esri/jsapi-resources/tree/master/esm-samples/jsapi-custom-widget)
 -   [Arcgis API for Javascript: Building Apps with React](https://www.youtube.com/watch?v=0fJmKSWURyU&ab_channel=EsriEvents)
--   [git-react-javascr]()ipt
+-   [git-react-javascr](https://github.com/Esri/jsapi-resources/tree/master/esm-samples)ipt
 -   [react]()
 -   [forge](https://forge.autodesk.com/blog/react-typescript-showing-shared-model)
 -   [forge-demo](https://forge-rcdb.autodesk.io/configurator)
 -   [forge-learning](https://learnforge.autodesk.io/#/)
+-   [forge-SDK](https://autodeskviewer.com/viewers/latest/docs/index.html)
 
 In the project directory, you can run:
 
-### `npm starthttps://github.com/Esri/jsapi-resources/tree/master/esm-samples`
+### `npm start`
 
 Runs the app in the development mode.
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.

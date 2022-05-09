@@ -10,6 +10,14 @@ Chart.defaults.plugins.legend.display = false
 // https://codepen.io/jaimerosales/pen/WZdzmN?editors=1010
 class Viewer extends Component {
     embedURLfromA360: string
+    barChart = 'Category'
+    doughnutChart = 'MICSetName'
+    api: string = 'http://localhost:5801/api/forge'
+    ws = 'ws://127.0.0.1:8801'
+    urn: string = 'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6ZGVsZXRlX2luXzI0aHJzLzEwMzctQ1dCLVctVFlQLVNUUi01Ri5ydnQ='
+    //'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6YThiMnF3ZzJweDRnZDU5dHZsYW5zcmZqZDYxM3ppZWctdGVzdC8xMDM3LUNXQi1XLVRZUC1BUkMtNUYucnZ0'
+    // 'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6YThiMnF3ZzJweDRnZDU5dHZsYW5zcmZqZDYxM3ppZWctdGVzdC8xMDM3LUNXQi1XLTNGLVNUUi5ydnQ='
+
     viewer?: Autodesk.Viewing.GuiViewer3D
     _modelData: any = {
         hasProperty(propertyName: string) {
@@ -39,14 +47,14 @@ class Viewer extends Component {
         // https://stackoverflow.com/questions/55119377/react-js-constructor-called-twice
         super(props)
         this.state = {
-            viewer: '100%',
-            dashboardPanel: '0%',
+            viewer: '70%',
+            dashboardPanel: '30%',
         }
 
-        this.embedURLfromA360 =
-            // 'https://myhub.autodesk360.com/ue2970ee2/shares/public/SH919a0QTf3c32634dcf7d90e49034aabd19?mode=embed' // Revit file
-            // 'https://autodesk3743.autodesk360.com/shares/public/SHabee1QT1a327cf2b7a174096650e4352bf?mode=embed'
-            'https://myhub.autodesk360.com/ue29c89b7/shares/public/SH7f1edQT22b515c761e81af7c91890bcea5?mode=embed' // Revit file (A360/Forge/Napa.rvt)
+        this.embedURLfromA360 = `https://developer.api.autodesk.com/modelderivative/v2/designdata/${this.urn}/manifest`
+        // 'https://myhub.autodesk360.com/ue2970ee2/shares/public/SH919a0QTf3c32634dcf7d90e49034aabd19?mode=embed' // Revit file
+        // 'https://autodesk3743.autodesk360.com/shares/public/SHabee1QT1a327cf2b7a174096650e4352bf?mode=embed'
+        //'https://myhub.autodesk360.com/ue29c89b7/shares/public/SH7f1edQT22b515c761e81af7c91890bcea5?mode=embed' // Revit file (A360/Forge/Napa.rvt)
     }
 
     render() {
@@ -108,7 +116,7 @@ class Viewer extends Component {
     }
 
     private onScriptLoaded() {
-        let that: any = this
+        let that = this
         this.getURN(function (urn: string) {
             var options = {
                 env: 'AutodeskProduction',
@@ -126,15 +134,15 @@ class Viewer extends Component {
     }
 
     getURN(onURNCallback: any) {
-        fetch(this.embedURLfromA360.replace('public', 'metadata').replace('mode=embed', ''))
-            .then((e) => e.json())
-            .then((metadata) => {
-                if (onURNCallback) {
-                    let urn = btoa(metadata.success.body.urn).replace('/', '_').replace('=', '')
-                    onURNCallback(urn)
-                }
-            })
-
+        // fetch(this.embedURLfromA360.replace('public', 'metadata').replace('mode=embed', ''))
+        //     .then((e) => e.json())
+        //     .then((metadata) => {
+        //         if (onURNCallback) {
+        //             let urn = btoa(metadata.success.body.urn).replace('/', '_').replace('=', '')
+        //             onURNCallback(urn)
+        //         }
+        //     })
+        onURNCallback(this.urn)
         // $.get({
         //     url: this.embedURLfromA360.replace('public', 'metadata').replace('mode=embed', ''),
         //     dataType: 'json',
@@ -149,14 +157,18 @@ class Viewer extends Component {
     }
 
     getForgeToken(onTokenCallback: any) {
-        fetch(this.embedURLfromA360.replace('public', 'sign').replace('mode=embed', 'oauth2=true'), {
-            method: 'post',
-            body: '{}',
+        // fetch(this.embedURLfromA360.replace('public', 'sign').replace('mode=embed', 'oauth2=true'), {
+        //     method: 'post',
+        //     body: '{}',
+        // })
+        fetch(this.api + '/oauth/token', {
+            method: 'get',
         })
             .then((e) => e.json())
             .then((oauth) => {
                 // console.log(oauth)
-                if (onTokenCallback) onTokenCallback(oauth.accessToken, oauth.validitySeconds)
+                // if (onTokenCallback) onTokenCallback(oauth.accessToken, oauth.validitySeconds)
+                if (onTokenCallback) onTokenCallback(oauth.access_token, oauth.expires_in)
             })
         // $.post({
         //     url: this.embedURLfromA360.replace('public', 'sign').replace('mode=embed', 'oauth2=true'),
@@ -167,7 +179,26 @@ class Viewer extends Component {
         //     },
         // })
     }
+    initwebSocket() {
+        var ws = new WebSocket('ws://127.0.0.1:8801')
 
+        ws.onopen = () => {
+            console.log('connect to web socket')
+        }
+        ws.onmessage = (evt) => {
+            if (this.viewer) {
+                this.viewer.hide(this._modelData.getIds(this.doughnutChart, evt.data))
+            }
+            console.log(evt.data)
+        }
+
+        ws.onclose = () => {
+            console.log('ws is closed')
+        }
+        window.onbeforeunload = () => {
+            ws.close()
+        }
+    }
     async onDocumentLoadSuccess(doc: Autodesk.Viewing.Document) {
         // A document contains references to 3D and 2D viewables.
         var items = doc.getRoot().search({
@@ -182,7 +213,8 @@ class Viewer extends Component {
         var viewerDiv: any = document.querySelector('#MyViewerDiv')
         this.viewer = new Autodesk.Viewing.GuiViewer3D(viewerDiv, { theme: 'light-theme' })
         this.viewer.start()
-
+        //Socket start
+        this.initwebSocket()
         // loading it dynamically
         const { MyExtension } = await import('./MyExtension')
         MyExtension.register()
@@ -208,9 +240,29 @@ class Viewer extends Component {
         // )
         // modelBuilder.addFragment(1, 'purple', transform)
 
+        var defaultModel = doc.getRoot().getDefaultGeometry()
+        this.viewer.setGhosting(false)
+        await this.viewer.loadDocumentNode(doc, defaultModel, { keepCurrentModels: true })
         ///
-        // var defaultModel = viewerDocument.getRoot().getDefaultGeometry();
-        await this.viewer.loadDocumentNode(doc, items[0], { keepCurrentModels: true })
+        // let urn =
+        //     'urn:dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6YThiMnF3ZzJweDRnZDU5dHZsYW5zcmZqZDYxM3ppZWctdGVzdC8xMDM3LUNXQi1XLTNGLVNUUi5ydnQ='
+        // Autodesk.Viewing.Document.load(
+        //     urn,
+        //     (doc) => {
+        //         var defaultModel = doc.getRoot().getDefaultGeometry()
+        //         if (this?.viewer) {
+        //             this.viewer.loadDocumentNode(doc, defaultModel, {
+        //                 preserveView: true,
+        //                 keepCurrentModels: true,
+        //                 // placementTransform: new THREE.Matrix4().setPosition(new THREE.Vector3(0, 0, 0)),
+        //                 // globalOffset: { x: 0, y: 0, z: 0 },
+        //             })
+        //         }
+        //         // console.log(doc)
+        //     },
+        //     this.onDocumentLoadError
+        // )
+        ///
         this.initalizeModelData(() => this.drawChart())
         // var options2 = {}
         // let that: any = this
@@ -286,7 +338,6 @@ class Viewer extends Component {
                 })
             })
         })
-        console.log(this._modelData)
     }
     generateColors(count: number) {
         var background = []
@@ -347,9 +398,10 @@ class Viewer extends Component {
                 })
             )
         }
-        chartAction('bar', 'Category', 2)
-        chartAction('doughnut', 'Base Constraint', 1.5)
-        this.setState({ viewer: '65%', dashboardPanel: '35%' })
+        chartAction('bar', this.barChart, 2)
+        chartAction('doughnut', this.doughnutChart, 1.5)
+        console.log(this._modelData)
+        this.setState({ viewer: '70%', dashboardPanel: '30%' })
     }
     //#endregion
 }
