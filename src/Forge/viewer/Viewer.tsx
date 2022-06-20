@@ -11,10 +11,10 @@ Chart.defaults.plugins.legend.display = false
 class Viewer extends Component {
     embedURLfromA360: string
     barChart = 'Category'
-    doughnutChart = 'MICSetName'
-    api: string = 'http://localhost:5801/api/forge'
+    doughnutChart = 'Comments'
+    api: string = 'http://localhost:3000/api/forge'
     ws = 'ws://127.0.0.1:8801'
-    urn: string = 'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6ZGVsZXRlX2luXzI0aHJzLzEwMzctQ1dCLVctVFlQLVNUUi01Ri5ydnQ='
+    urn: string = 'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6ZGVsZXRlX2luXzI0aHJzL1VSQV9NYXN0ZXJNb2RlbC56aXA='
     //'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6YThiMnF3ZzJweDRnZDU5dHZsYW5zcmZqZDYxM3ppZWctdGVzdC8xMDM3LUNXQi1XLVRZUC1BUkMtNUYucnZ0'
     // 'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6YThiMnF3ZzJweDRnZDU5dHZsYW5zcmZqZDYxM3ppZWctdGVzdC8xMDM3LUNXQi1XLTNGLVNUUi5ydnQ='
 
@@ -196,6 +196,7 @@ class Viewer extends Component {
             console.log('ws is closed')
         }
         window.onbeforeunload = () => {
+            ws.onclose = function () {}
             ws.close()
         }
     }

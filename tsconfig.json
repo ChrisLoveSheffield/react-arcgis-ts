@@ -21,8 +21,14 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx", 
+    "strictNullChecks": true
+
   },
   "include": [
     "src"
-  ]
+  ],
+  "paths": {      
+    "cesium": ["node_modules/cesium/Source"]
+  }
+
 }

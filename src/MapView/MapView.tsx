@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from 'react'
-import { ArcGISMap, MapView, Point, FeatureLayer } from './widget/library'
+import { ArcGISMap, MapView, Point, FeatureLayer, esriConfig } from './widget/library'
 import '../App.css'
 import WidgetPad from './widget/widgetPad'
 // import { ViewContext } from './context/ViewContext'
@@ -10,7 +10,21 @@ interface mapContainer extends React.ComponentPropsWithRef<'div'> {
 
 const MapViewConatainer: React.FC<mapContainer> = ({ basemap, zoom }) => {
     const mapDiv = useRef(null)
-
+    const apikey = '584b2fa686f14ba283874318b3b8d6b0'
+    console.log(esriConfig)
+    esriConfig.request.interceptors?.push({
+        before: function (params) {
+            if (params.url.indexOf('api.hkmapservice.gov.hk') >= 0) {
+                if (params.requestOptions.query) {
+                    params.requestOptions.query.key = apikey
+                } else {
+                    params.requestOptions.query = {
+                        key: apikey,
+                    }
+                }
+            }
+        },
+    })
     const createMapView = () => {
         if (mapDiv.current) {
             const map = new ArcGISMap({
@@ -30,7 +44,7 @@ const MapViewConatainer: React.FC<mapContainer> = ({ basemap, zoom }) => {
             })
             const layer = new FeatureLayer({
                 // URL to the service
-                url: 'https://hsksht1pappw072.as.aecomnet.com/server/rest/services/Hosted/Editor_test/FeatureServer/0',
+                url: 'https://api.hkmapservice.gov.hk/ags/map/layer/ib1000/utilities/utilitypolygon', //'https://hsksht1pappw072.as.aecomnet.com/server/rest/services/Hosted/Editor_test/FeatureServer/0',
             })
             map.add(layer)
             return view

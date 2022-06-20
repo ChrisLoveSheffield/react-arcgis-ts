@@ -109,7 +109,7 @@ const WidgetPad: React.FC<BaseWigetOption> = ({ esri_map }) => {
                                     hidden={wgtState[wgt.actionId]}
                                     key={'_' + wgt.text}
                                     animation
-                                    onClose={(e) => {
+                                    onClose={(e: any) => {
                                         if (e) {
                                             return setWigetState(
                                                 e as React.MouseEvent<Element, MouseEvent>,
