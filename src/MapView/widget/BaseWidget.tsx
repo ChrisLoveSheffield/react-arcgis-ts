@@ -1,11 +1,11 @@
 import React from 'react'
-import { MapView } from './library'
-const _init = (target: BaseWidgeInterface, propertyKey: string) => {
+import { MapView, Widget } from './library'
+const init = (target: BaseWidgeInterface, propertyKey: string) => {
     target.postCreate()
 }
 
-class BaseWidgeInterface extends React.Component {
-    state: 'postCreate' | 'startUp' | 'onOpen' | 'onClose' = 'postCreate'
+abstract class BaseWidgeInterface extends Widget {
+    _state: 'postCreate' | 'startUp' | 'onOpen' | 'onClose' = 'postCreate'
     /**
      * fire before create
      */
@@ -22,11 +22,6 @@ class BaseWidgeInterface extends React.Component {
      * fire before close
      */
     onClose(): void {}
-
-    @_init
-    render() {
-        return <></>
-    }
 }
 interface BaseWigetOption {
     esri_map?: MapView

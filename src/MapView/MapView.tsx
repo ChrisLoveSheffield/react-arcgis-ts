@@ -11,7 +11,6 @@ interface mapContainer extends React.ComponentPropsWithRef<'div'> {
 const MapViewConatainer: React.FC<mapContainer> = ({ basemap, zoom }) => {
     const mapDiv = useRef(null)
     const apikey = '584b2fa686f14ba283874318b3b8d6b0'
-    console.log(esriConfig)
     esriConfig.request.interceptors?.push({
         before: function (params) {
             if (params.url.indexOf('api.hkmapservice.gov.hk') >= 0) {
@@ -44,9 +43,26 @@ const MapViewConatainer: React.FC<mapContainer> = ({ basemap, zoom }) => {
             })
             const layer = new FeatureLayer({
                 // URL to the service
-                url: 'https://api.hkmapservice.gov.hk/ags/map/layer/ib1000/utilities/utilitypolygon', //'https://hsksht1pappw072.as.aecomnet.com/server/rest/services/Hosted/Editor_test/FeatureServer/0',
+                url: 'https://api.hkmapservice.gov.hk/ags/map/layer/ib1000/utilities/utilitypolygon',
+                layerId: undefined,
+                // url: 'https://hsksht1pappw072.as.aecomnet.com/server/rest/services/Hosted/Editor_test/FeatureServer/0',
+                outFields: ['*'],
             })
             map.add(layer)
+
+            const eventHandler = (event: any) => {
+                view.hitTest(event).then(function (response) {
+                    if (response.results.length) {
+                        const graphic = response.results[0].graphic
+                        const attributes = graphic.attributes
+                        console.log(attributes)
+                        view.popup.open({
+                            // Set the popup
+                        })
+                    }
+                })
+            }
+            view.on('click', eventHandler)
             return view
         }
     }
